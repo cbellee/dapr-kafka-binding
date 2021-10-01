@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subapp
+  labels:
+    app: subapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subapp
+  template:
+    metadata:
+      labels:
+        app: subapp
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "subapp"
+        dapr.io/app-port: "8081"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: sub
+        image: belstarr/dapr-sub:latest
+        ports:
+        - containerPort: 8081
+        imagePullPolicy: Always
+        env:
+          - name: APP_PORT
+            value: "8081"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi

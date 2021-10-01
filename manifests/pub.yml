@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pubapp
+  labels:
+    app: pubapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pubapp
+  template:
+    metadata:
+      labels:
+        app: pubapp
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "pubapp"
+        dapr.io/app-port: "8080"
+        dapr.io/log-level: "debug"
+        dapr.io/sidecar-liveness-probe-delay-seconds: "20"
+        dapr.io/sidecar-liveness-probe-timeout-seconds: "20"
+        dapr.io/sidecar-liveness-probe-threshold: "20"
+        dapr.io/sidecar-readiness-probe-delay-seconds: "20"
+        dapr.io/sidecar-readiness-probe-timeout-seconds: "20"
+        dapr.io/sidecar-readiness-probe-threshold: "20"
+    spec:
+      containers:
+      - name: pub
+        image: belstarr/dapr-pub:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
