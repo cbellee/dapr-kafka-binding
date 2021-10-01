@@ -1,7 +1,4 @@
-RG_NAME='dapr-k8s-rg'
-LOCATION='australiaeast'
-SSH_PUBLIC_KEY=$(cat ~/.ssh/id_rsa.pub)
-DEPLOYMENT_NAME='dapr-k8s-deployment'
+DOCKER_PASSWORD=''
 
 build:
 	docker build -t belstarr/dapr-pub:latest -f ./src/pub/Dockerfile .
@@ -12,7 +9,7 @@ push:
 	docker push belstarr/dapr-pub:latest
 	docker push belstarr/dapr-sub:latest
 
-deploy_k8s:
+k8s:
 	helm repo add dapr https://dapr.github.io/helm-charts/
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo update
@@ -32,18 +29,8 @@ deploy_k8s:
 	kubectl apply -f ./manifests/pub.yml
 	kubectl apply -f ./manifests/sub.yml
 
-deploy_infra:
-	az group create --location ${LOCATION} --name ${RG_NAME}
-
-	az deployment group create \
-		--resource-group ${RG_NAME} \
-		--name ${DEPLOYMENT_NAME} \
-		--template-file ./infra/main.bicep \
-		--parameters sshPublicKey="${SSH_PUBLIC_KEY}"
-
-	CLUSTER_NAME=$(az deployment group show --resource-group ${RG_NAME} --name ${DEPLOYMENT_NAME} --query 'properties.outputs.aksClusterName.value' -o tsv)
-
-	az aks get-credentials -g ${RG_NAME} -n ${CLUSTER_NAME} --admin
+infra:
+	./infra/deploy.sh
 
 all:
 	make build && make push && make deploy_k8s
