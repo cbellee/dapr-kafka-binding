@@ -6,15 +6,12 @@ spec:
   type: bindings.kafka
   version: v1
   metadata:
-  # Kafka broker connection setting
   - name: brokers
-    value: "dapr-kafka-headless.kafka.svc.cluster.local:9092,dapr-kafka.kafka.svc.cluster.local:9092,dapr-kafka-headless.kafka.svc.cluster.local:9093,dapr-kafka.kafka.svc.cluster.local:9093"
-  # consumer configuration: topic and consumer group
+    value: "dapr-kafka-headless.kafka.svc.cluster.local:9092"
   - name: topics
     value: neworder
   - name: consumerGroup
     value: group1
-  # publisher configuration: topic
   - name: publishTopic
     value: neworder
   - name: authRequired
